@@ -14,18 +14,14 @@ from telethon.errors import (
     PeerIdInvalidError
 )
 
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
-from bs4 import BeautifulSoup
 from io import BytesIO
+import urllib.parse
+import requests
 from urllib.parse import quote
 from tempfile import NamedTemporaryFile
 
 import qrcode
 import os
-import time
 
 # own imports
 from config import YOUR_API_ID, YOUR_API_HASH
@@ -87,33 +83,59 @@ def get_username(sender) -> str:
 
 
 def scrape_wildberries(query):
-    """ Function for scraping products from Wildberries.ru"""
-    # Setup webdriver
-    webdriver_service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=webdriver_service)
+    def encode_phrase(phrase):
+        """
+        Encode the phrase using UTF-8
 
-    try:
-        url = f"https://www.wildberries.ru/catalog/0/search.aspx?search={query}"
-        driver.get(url)
+        """
+        encoded_phrase = urllib.parse.quote(phrase.encode('utf-8'), safe='')
+        # Replace '%' with '^%^' to match the format you've described
+        # formatted_encoded_phrase = encoded_phrase.replace('%', '^%^')
+        return encoded_phrase
 
-        # Waits 10 seconds for the page to load and JavaScript to execute
-        time.sleep(10)
+    def get_items(query):
 
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        query = encode_phrase(query)
 
-        product_elements = soup.find_all('article', class_='product-card')[:10]
+        url = f"https://search.wb.ru/exactmatch/ru/common/v5/search?ab_testing=false&appType=1&curr=rub&dest=-1257786&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false"
+
+        headers = {
+            'Accept': '*/*',
+            'Accept-Language': 'ru-RU,ru;q=0.8',
+            'Connection': 'keep-alive',
+            'Origin': 'https://www.wildberries.ru',
+            'Referer': 'https://www.wildberries.ru/',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'cross-site',
+            'Sec-GPC': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+            'sec-ch-ua': '"Brave";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': 'Windows',
+            'x-queryid': 'qid362479734171725507720240601205136'
+        }
+        response = requests.get(url=url, headers=headers)
+        return response.json()
+
+    def filter_items(response):
 
         products = []
-        for element in product_elements:
-            product_link_element = element.find('a', class_='j-card-link')
-            if product_link_element:
-                product_name = product_link_element['aria-label']
-                product_link = f"https://www.wildberries.ru{product_link_element['href']}"
-                products.append({'name': product_name, 'link': product_link})
+        products_raw = response.get('data', {}).get('products', None)
 
+        if products_raw != None and len(products_raw) > 0:
+            for product in products_raw[:10]:
+                name = product.get('name', None)
+                id = product.get('id', None)
+                products.append({
+                    'name': name,
+                    'link': f'https://www.wildberries.ru/catalog/{id}/detail.aspx',
+                })
         return products
-    finally:
-        driver.quit()
+
+    response = get_items(query)
+    products = filter_items(response)
+    return products
 
 
 @app.on_event("startup")
