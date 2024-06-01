@@ -179,8 +179,8 @@ async def login(
 
             clients[phone].start(phone=lambda: phone)
             # ^ ^ ^
-            # coroutine without await so that Telethon does not wait for code from Telegram
-            # but allowed to initiate qr_login() in the function render_qr_code
+            # coroutine without await so that makes Telethon does not wait for code from Telegram
+            # but allows to initiate qr_login() in the function render_qr_code
 
             encoded_phone = quote(phone)
             qr_code_url = f"/qr_code/{encoded_phone}"
