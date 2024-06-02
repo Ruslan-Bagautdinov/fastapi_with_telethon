@@ -6,10 +6,10 @@ This FastAPI web interface serves as the backend for a Telegram client, enabling
 
 ## Features
 
-- **User Authentication**: Users can authenticate with their Telegram account using a QR code. The application handles the login process and securely stores the necessary session data.
-- **Message Retrieval**: The application fetches new text messages from the Telegram API and stores them in a database, categorized by chats.
-- **Message Sending**: Users can send text messages to other Telegram users through the web interface or API.
-- **Wildberries Parsing**: The application provides an API endpoint that triggers a parsing process for Wildberries with the query "любой товар" and city "Москва". The application sends the top 10 product names along with their links to the user.
+- **User Authentication**: Users can authenticate with their Telegram account using a QR code. The application handles the login process and stores in memory the necessary session data.
+- **Message Retrieval**: The application fetches new text messages from the Telegram API and stores them in memory, categorized by chats.
+- **Message Sending**: Users can send text and media messages to other Telegram users through the web interface.
+- **Wildberries Parsing**: The application provides an API endpoint that triggers a parsing process for Wildberries.ru with the query "любой товар" and city "Москва". The application sends the top 10 product names along with their links to the user.
 
 ## Installation
 
