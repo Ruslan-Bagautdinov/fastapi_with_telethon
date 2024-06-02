@@ -2,7 +2,9 @@
 
 ## Description
 
-This FastAPI web interface serves as the backend for a Telegram client, enabling users to authenticate with their Telegram account using a QR code, send and receive text messages, and perform product searches on Wildberries.
+The web interface for a Telegram client. Based on FastAPI and Telethon. 
+Provides users with the ability to authenticate to their Telegram account using a QR code, 
+send and receive text and media messages, and search for products on marketplace.
 
 ## Features
 
@@ -83,7 +85,7 @@ GET http://localhost:80/qr_code/{phone}
 
 This endpoint is used to check the login status of the user.
 Requires the the user's `{phone}` as a query parameter in the URL.
-It returns a JSON response indicating whether the user is logged in or not.
+It returns a JSON response indicating the user's login status.
 
 
 ```bash
@@ -102,7 +104,7 @@ GET http://localhost:80/messages?phone={phone}&uname={chat username}
 ### POST /messages
 
 This endpoint is used to send a text message to another Telegram user. 
-It requires a JSON payload with the user's phone number, the recipient's phone number and the message text.
+Requires a JSON payload with the user's phone number, the recipient's phone number and the message text.
 
 ```bash
 POST http://localhost:80/messages
@@ -118,7 +120,7 @@ Content-Type: application/json
 ### POST /messages/media
 
 This endpoint is used to send media (e.g., images, videos) to another Telegram user. 
-It requires a JSON payload with the user's phone number, the recipient's phone number and the media file.
+Requires a JSON payload with the user's phone number, the recipient's phone number and the media file.
 
 ```bash
 POST http://localhost:80/messages/media
@@ -133,7 +135,7 @@ Content-Type: application/json
 
 ### GET /wild
 
-This endpoint is used to trigger a parsing process for Wildberries with any query. It returns the top 10 product names with links to the product pages.
+This endpoint is used to trigger a parsing process for products with any `{query}`. It returns the top 10 product names with links to the product pages.
 
 ```bash
 GET http://localhost/wild?query={query}
