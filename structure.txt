@@ -1,0 +1,17 @@
+fastapi_with_telethon
+├───📁 tests/
+│   ├───📄 test_main.py
+│   └───📄 __init__.py
+├───📄 config.py
+├───📄 docker-compose.yml
+├───📄 Dockerfile
+├───📄 main.py
+├───📄 pytest.ini
+├───📄 README.md
+├───📄 requirements.txt
+├───📄 test_file.txt
+├───📄 test_main.http
+├───📄 .dockerignore
+├───📄 .env
+├───📄 .gitignore
+└───📄 __init__.py
